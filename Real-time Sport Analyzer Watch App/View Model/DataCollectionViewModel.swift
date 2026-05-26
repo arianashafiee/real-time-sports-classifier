@@ -12,6 +12,10 @@ final class DataCollectionViewModel: NSObject, ObservableObject {
     @Published var motionData: [MotionDataModel] = []
 
     private let motionManager = CMMotionManager()
+    private let pedometer = CMPedometer()
+    private var currentPace: Double = 0.0
+    private var currentStepCount: Int = 0
+    private var currentCadence: Double = 0.0
     private var currentActivity: String = ""
 
     func startCollectingData(for activity: String) {
@@ -24,6 +28,7 @@ final class DataCollectionViewModel: NSObject, ObservableObject {
             return
         }
 
+        startPedometerUpdates()
         motionManager.deviceMotionUpdateInterval = 1.0 / 50.0
         motionManager.startDeviceMotionUpdates(using: .xMagneticNorthZVertical, to: OperationQueue.current!) { [weak self] data, _ in
             guard let self, let validData = data else { return }
@@ -39,9 +44,9 @@ final class DataCollectionViewModel: NSObject, ObservableObject {
                 magX: validData.magneticField.field.x,
                 magY: validData.magneticField.field.y,
                 magZ: validData.magneticField.field.z,
-                pace: 0,
-                stepCount: 0,
-                cadence: 0
+                pace: self.currentPace,
+                stepCount: self.currentStepCount,
+                cadence: self.currentCadence
             )
             self.motionData.append(record)
         }
@@ -49,8 +54,20 @@ final class DataCollectionViewModel: NSObject, ObservableObject {
         status = "Collecting \(activity) data"
     }
 
+    private func startPedometerUpdates() {
+        pedometer.startUpdates(from: Date()) { [weak self] pedometerData, error in
+            guard let pedometerData, error == nil else { return }
+            DispatchQueue.main.async {
+                self?.currentPace = pedometerData.currentPace?.doubleValue ?? 0
+                self?.currentStepCount = pedometerData.numberOfSteps.intValue
+                self?.currentCadence = pedometerData.currentCadence?.doubleValue ?? 0
+            }
+        }
+    }
+
     func stopCollectingData() {
         motionManager.stopDeviceMotionUpdates()
+        pedometer.stopUpdates()
         isCollecting = false
         status = "Collection stopped"
     }
