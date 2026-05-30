@@ -6,12 +6,9 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var collectionViewModel = DataCollectionViewModel()
+
     var body: some View {
-        VStack {
-            Text("Sport Analyzer")
-                .font(.headline)
-            Text("Watch target ready")
-                .font(.caption2)
-        }
+        DataCollectionView(viewModel: collectionViewModel)
     }
 }
