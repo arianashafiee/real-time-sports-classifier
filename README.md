@@ -8,3 +8,6 @@ Apple Watch app that classifies basketball vs soccer from motion sensor data, wi
 
 ## Setup
 Open `Real-time Sport Analyzer.xcodeproj` in Xcode 15+ and run on paired iPhone + Apple Watch simulators or devices.
+
+## Model training
+Use `SportsClassifier.ipynb` to preprocess 10-second sensor windows, engineer statistical features, and export a Core ML model for on-watch inference.
