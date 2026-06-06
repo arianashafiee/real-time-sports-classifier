@@ -2,13 +2,36 @@
 //  ContentView.swift
 //  Real-time Sport Analyzer Watch App
 //
+//  Created by Ariana Shafiee on 5/21/26.
+//
+
 
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var collectionViewModel = DataCollectionViewModel()
+    @StateObject var detectionViewModel: SportDetectionViewModel
+    @StateObject var collectionViewModel: DataCollectionViewModel
 
     var body: some View {
-        DataCollectionView(viewModel: collectionViewModel)
+        TabView {
+            SportDetectionView(viewModel: detectionViewModel)
+                .tabItem {
+                    Image(systemName: "waveform.path.ecg")
+                    Text("Detect")
+                }
+
+            DataCollectionView(viewModel: collectionViewModel)
+                .tabItem {
+                    Image(systemName: "square.and.pencil")
+                    Text("Collect")
+                }
+        }
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView(detectionViewModel: SportDetectionViewModel(), collectionViewModel: DataCollectionViewModel()
+        )
     }
 }
