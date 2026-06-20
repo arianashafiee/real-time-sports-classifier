@@ -1,4 +1,4 @@
-# Real-time Sport Analyzer
+# Apple Watch Sports Classifier
 
 Apple Watch app that classifies basketball vs soccer from motion sensor data, with an iPhone companion for collecting training data.
 
